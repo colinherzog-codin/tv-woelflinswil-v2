@@ -1,16 +1,16 @@
-import type { Metadata } from 'next/types'
-
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
-import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
 import React from 'react'
+import { PageRange } from '@/components/PageRange'
+import { CollectionArchive } from '@/components/CollectionArchive'
+import { Pagination } from '@/components/Pagination'
+import { getPayloadHMR } from '@payloadcms/next/utilities'
+import configPromise from '@payload-config'
+import { PostsOverviewBlock as PostOverviewProps } from '@/payload-types'
 
-export const dynamic = 'force-static'
-export const revalidate = 600
+type Props = {
+  className?: string
+} & PostOverviewProps
 
-export default async function Page() {
+export const PostsOverviewBlock: React.FC<Props> = async() => {
   const payload = await getPayloadHMR({ config: configPromise })
 
   const posts = await payload.find({
@@ -18,15 +18,8 @@ export default async function Page() {
     depth: 1,
     limit: 12,
   })
-
   return (
-    <div className="pt-24 pb-24">
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>Beiträge</h1>
-        </div>
-      </div>
-
+    <div className="pt-2 pb-24">
       <div className="container mb-8">
         <PageRange
           collection="posts"
@@ -45,10 +38,4 @@ export default async function Page() {
       </div>
     </div>
   )
-}
-
-export function generateMetadata(): Metadata {
-  return {
-    title: `Payload Website Template Posts`,
-  }
 }

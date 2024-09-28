@@ -74,9 +74,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
           return text
         }
 
-        // NOTE: Hacky fix for
-        // https://github.com/facebook/lexical/blob/d10c4e6e55261b2fdd7d1845aed46151d0f06a8c/packages/lexical-list/src/LexicalListItemNode.ts#L133
-        // which does not return checked: false (only true - i.e. there is no prop for false)
         const serializedChildrenFn = (node: NodeTypes): JSX.Element | null => {
           if (node.children == null) {
             return null
@@ -111,7 +108,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             case 'mediaBlock':
               return (
                 <MediaBlock
-                  className="col-start-1 col-span-3"
+                  className="col-start-1 col-span-3 m-0"
                   imgClassName="m-0"
                   key={index}
                   {...block}
@@ -121,9 +118,9 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                 />
               )
             case 'banner':
-              return <BannerBlock className="col-start-2 mb-4" key={index} {...block} />
+              return <BannerBlock className="col-start-2 mb-2" key={index} {...block} />
             case 'code':
-              return <CodeBlock className="col-start-2" key={index} {...block} />
+              return <CodeBlock className="col-start-2 mb-2" key={index} {...block} />
             default:
               return null
           }
@@ -134,7 +131,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             }
             case 'paragraph': {
               return (
-                <p className="col-start-2" key={index}>
+                <p className="col-start-2 mb-1 leading-6" key={index}> {/* Adjust line height */}
                   {serializedChildren}
                 </p>
               )
@@ -143,10 +140,10 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               const Tag = node?.tag
               const headingClass =
                 Tag === 'h1'
-                  ? 'text-4xl md:text-5xl lg:text-6xl' // Adjust sizes as needed
+                  ? 'text-4xl md:text-5xl lg:text-6xl mb-2 mt-4 leading-tight' // Adjust margins and line-height
                   : Tag === 'h2'
-                    ? 'text-3xl md:text-4xl lg:text-5xl' // Adjust sizes as needed
-                    : '' // Adjust sizes for other headings
+                    ? 'text-3xl md:text-4xl lg:text-5xl mb-2 mt-3 leading-tight' // Adjust margins and line-height
+                    : 'mb-1 mt-2 leading-snug' // Adjust line-height for smaller headings
 
               return (
                 <Tag className={`col-start-2 ${headingClass}`} key={index}>
@@ -157,7 +154,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             case 'list': {
               const Tag = node?.tag
               return (
-                <Tag className="list col-start-2" key={index}>
+                <Tag className="list col-start-2 mb-1 leading-5" key={index}> {/* Reduce line height */}
                   {serializedChildren}
                 </Tag>
               )
@@ -169,7 +166,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                     aria-checked={node.checked ? 'true' : 'false'}
                     className={` ${node.checked ? '' : ''}`}
                     key={index}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="checkbox"
                     tabIndex={-1}
                     value={node?.value}
@@ -179,7 +175,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                 )
               } else {
                 return (
-                  <li key={index} value={node?.value}>
+                  <li className="mb-1 leading-5" key={index} value={node?.value}>
                     {serializedChildren}
                   </li>
                 )
@@ -187,7 +183,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             }
             case 'quote': {
               return (
-                <blockquote className="col-start-2" key={index}>
+                <blockquote className="col-start-2 mb-1 leading-5" key={index}> {/* Reduce line height */}
                   {serializedChildren}
                 </blockquote>
               )

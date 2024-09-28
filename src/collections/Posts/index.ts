@@ -65,6 +65,7 @@ export const Posts: CollectionConfig = {
     },
     {
       name: 'flickrID',
+      label: 'Flickr ID',
       type: 'text',
       required: true,
     },

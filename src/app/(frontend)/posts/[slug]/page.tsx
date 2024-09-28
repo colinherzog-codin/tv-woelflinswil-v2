@@ -13,14 +13,12 @@ import type { Post } from '@/payload-types'
 import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
+import Link from 'next/link'
 
 export async function generateStaticParams() {
   const payload = await getPayloadHMR({ config: configPromise })
   const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
+    collection: 'posts', draft: false, limit: 1000, overrideAccess: false,
   })
 
   return posts.docs?.map(({ slug }) => slug)
@@ -32,8 +30,10 @@ export default async function Post({ params: { slug = '' } }) {
 
   if (!post) return <PayloadRedirects url={url} />
 
-  return (
-    <article className="pt-16 pb-16">
+  // Create the internal route for the Flickr album using flickrID
+  const albumPageUrl = post.flickrID ? `/albums/${post.flickrID}` : null
+
+  return (<article className="pt-16 pb-16">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -41,7 +41,11 @@ export default async function Post({ params: { slug = '' } }) {
 
       <PostHero post={post} />
 
+
       <div className="flex flex-col items-center gap-4 pt-8">
+          {albumPageUrl && (<Link href={albumPageUrl} className="text-blue-500 hover:underline">
+            Fotoalbum ansehen
+          </Link>)}
         <div className="container lg:mx-0 lg:grid lg:grid-cols-[1fr_48rem_1fr] grid-rows-[1fr]">
           <RichText
             className="lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[1fr]"
@@ -50,20 +54,17 @@ export default async function Post({ params: { slug = '' } }) {
           />
         </div>
 
-        {post.relatedPosts && post.relatedPosts.length > 0 && (
-          <RelatedPosts
+        {post.relatedPosts && post.relatedPosts.length > 0 && (<RelatedPosts
             className="mt-12"
             docs={post.relatedPosts.filter((post) => typeof post === 'object')}
-          />
-        )}
+          />)}
       </div>
-    </article>
-  )
+    </article>)
 }
 
 export async function generateMetadata({
-  params: { slug },
-}: {
+                                         params: { slug },
+                                       }: {
   params: { slug: string }
 }): Promise<Metadata> {
   const post = await queryPostBySlug({ slug })
@@ -77,15 +78,11 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload = await getPayloadHMR({ config: configPromise })
 
   const result = await payload.find({
-    collection: 'posts',
-    draft,
-    limit: 1,
-    overrideAccess: true,
-    where: {
+    collection: 'posts', draft, limit: 1, overrideAccess: true, where: {
       slug: {
         equals: slug,
       },
-    },
+    }, depth: 2,
   })
 
   return result.docs?.[0] || null

@@ -18,6 +18,7 @@ type CMSLinkType = {
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
   url?: string | null
+  onClickHandler?: () => void
 }
 
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
@@ -31,6 +32,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     reference,
     size: sizeFromProps,
     url,
+    onClickHandler
   } = props
 
   const href =
@@ -65,7 +67,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (appearance === 'dropdownLink') {
     return (
-      <Link href={href || url || ''} className="block px-4 py-2 hover:bg-muted">
+      <Link href={href || url || ''} className="block px-4 py-2 hover:bg-muted" onClick={onClickHandler}>
         {label && label}
       </Link>
     )

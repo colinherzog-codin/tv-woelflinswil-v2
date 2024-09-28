@@ -96,7 +96,7 @@ export interface Page {
       | null;
     media?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | PostsOverviewBlock)[];
   meta?: {
     title?: string | null;
     image?: (string | null) | Media;
@@ -541,6 +541,15 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "postsOverviewBlock".
+ */
+export interface PostsOverviewBlock {
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postsOverview';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

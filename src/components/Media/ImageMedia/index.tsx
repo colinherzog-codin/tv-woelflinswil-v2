@@ -9,6 +9,8 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import cssVariables from '@/cssVariables'
+import { useRouter } from 'next/navigation'
+import imageLoader from '@/loader'
 
 const { breakpoints } = cssVariables
 
@@ -24,6 +26,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     size: sizeFromProps,
     src: srcFromProps,
   } = props
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState(true)
 
@@ -34,29 +37,22 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   if (!src && resource && typeof resource === 'object') {
     const {
-      alt: altFromResource,
-      filename: fullFilename,
-      height: fullHeight,
-      url,
-      width: fullWidth,
+      alt: altFromResource, filename: fullFilename, height: fullHeight, url, width: fullWidth,
     } = resource
 
     width = fullWidth!
     height = fullHeight!
     alt = altFromResource
 
-    src = `${process.env.CUSTOMER_ID}/${fullFilename}`
+    src = `TVWWIL00000002/${fullFilename}`
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
-  const sizes = sizeFromProps
-    ? sizeFromProps
-    : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value}px`)
-        .join(', ')
+  const sizes = sizeFromProps ? sizeFromProps : Object.entries(breakpoints)
+    .map(([, value]) => `(max-width: ${value}px) ${value}px`)
+    .join(', ')
 
-  return (
-    <NextImage
+  return (<NextImage
       alt={alt || ''}
       className={cn(imgClassName)}
       fill={fill}
@@ -69,9 +65,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         }
       }}
       priority={priority}
-      sizes={sizes}
       src={src}
+      sizes={sizes}
       width={!fill ? width : undefined}
-    />
-  )
+    />)
 }
