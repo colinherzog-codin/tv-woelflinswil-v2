@@ -36,6 +36,8 @@ import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
 import { cloudflareAdapter } from '@/uploads/cloudflare-media-storage'
+import { azureStorage } from '@payloadcms/storage-azure'
+import { Files } from '@/collections/Files'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -121,7 +123,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Files, Categories, Users],
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   endpoints: [],
@@ -138,6 +140,18 @@ export default buildConfig({
           prefix: process.env.CUSTOMER_ID,
         },
       },
+    },
+    ),
+    azureStorage({
+      collections: {
+        ['files']: {
+          prefix: 'tvwpv2'
+        },
+      },
+      allowContainerCreate: true,
+      baseURL: process.env.AZURE_BASE_URL || '',
+      connectionString: process.env.AZURE_CONNECTION_STRING || '',
+      containerName: process.env.AZURE_CONTAINER_NAME || '',
     }),
     redirectsPlugin({
       collections: ['pages', 'posts'],

@@ -32,14 +32,13 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     reference,
     size: sizeFromProps,
     url,
-    onClickHandler
+    onClickHandler,
   } = props
 
+  // Determine the href based on whether it's a reference or a custom URL
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
+      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${reference.value.slug}`
       : url
 
   if (!href) return null
@@ -50,7 +49,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   /* Ensure we don't break any styles set by richText */
   if (appearance === 'inline') {
     return (
-      <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+      <Link className={cn(className)} href={href} {...newTabProps}>
         {label && label}
         {children && children}
       </Link>
@@ -59,7 +58,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (appearance === 'navBarSimpleLink') {
     return (
-      <Link href={href || url || ''} className="hover:text-secondary">
+      <Link href={href} className="hover:text-secondary">
         {label && label}
       </Link>
     )
@@ -67,7 +66,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (appearance === 'dropdownLink') {
     return (
-      <Link href={href || url || ''} className="block px-4 py-2 hover:bg-muted" onClick={onClickHandler}>
+      <Link href={href} className="block px-4 py-2 hover:bg-muted">
         {label && label}
       </Link>
     )
@@ -75,7 +74,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   return (
     <Button asChild className={className} size={size} variant={appearance}>
-      <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+      <Link className={cn(className)} href={href} {...newTabProps}>
         {label && label}
         {children && children}
       </Link>

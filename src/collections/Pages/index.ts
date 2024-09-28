@@ -21,6 +21,8 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { PostsOverview } from '@/blocks/PostsOverview/config'
+import { Downloads } from '@/blocks/Downloads/config'
+import { Committees } from '@/blocks/Committees/config'
 export const Pages: CollectionConfig = {
   slug: 'pages',
   access: {
@@ -69,7 +71,7 @@ export const Pages: CollectionConfig = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, PostsOverview],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, PostsOverview, Downloads, Committees],
               required: true,
             },
           ],

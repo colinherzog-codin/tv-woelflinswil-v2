@@ -34,6 +34,8 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    focalPoint: true,
+    crop: true,
     adminThumbnail: ({ doc }) =>
       `https://imagedelivery.net/${process.env.CLOUDFLARE_ACCOUNT_HASH}/${process.env.CUSTOMER_ID}/${doc.filename}/public`,
   },

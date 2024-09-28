@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faChevronDown, faTimes } from '@awesome.me/kit-693429779d/icons/classic/solid'
 import Image from 'next/image'
 import { CMSLink } from '@/components/Link'
-import imageLoader from '@/loader'
 
 interface HeaderClientProps {
   header: Header | Footer
