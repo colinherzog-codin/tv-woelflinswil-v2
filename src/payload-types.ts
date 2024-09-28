@@ -297,6 +297,7 @@ export interface Category {
 export interface Post {
   id: string;
   title: string;
+  flickrID: string;
   content: {
     root: {
       type: string;
@@ -702,7 +703,8 @@ export interface Header {
   id: string;
   navItems?:
     | {
-        link: {
+        type?: ('link' | 'dropdown') | null;
+        link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
           reference?: {
@@ -712,9 +714,26 @@ export interface Header {
           url?: string | null;
           label: string;
         };
+        dropdownTitle?: string | null;
+        dropdownLinks?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?: {
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null;
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
+  logo: string | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
