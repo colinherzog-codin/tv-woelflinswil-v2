@@ -45,7 +45,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight!
     alt = altFromResource
 
-    src = `${process.env.NEXT_PUBLIC_SERVER_URL}${url}`
+    src = `${process.env.CUSTOMER_ID}/${fullFilename}`
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
@@ -69,7 +69,6 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         }
       }}
       priority={priority}
-      quality={90}
       sizes={sizes}
       src={src}
       width={!fill ? width : undefined}

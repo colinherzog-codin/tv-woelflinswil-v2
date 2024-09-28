@@ -141,8 +141,15 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             }
             case 'heading': {
               const Tag = node?.tag
+              const headingClass =
+                Tag === 'h1'
+                  ? 'text-4xl md:text-5xl lg:text-6xl' // Adjust sizes as needed
+                  : Tag === 'h2'
+                    ? 'text-3xl md:text-4xl lg:text-5xl' // Adjust sizes as needed
+                    : '' // Adjust sizes for other headings
+
               return (
-                <Tag className="col-start-2" key={index}>
+                <Tag className={`col-start-2 ${headingClass}`} key={index}>
                   {serializedChildren}
                 </Tag>
               )

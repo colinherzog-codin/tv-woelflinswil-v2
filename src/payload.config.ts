@@ -26,7 +26,6 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import Users from './collections/Users'
-import { seedHandler } from './endpoints/seedHandler'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { revalidateRedirects } from './hooks/revalidateRedirects'
@@ -35,6 +34,8 @@ import { Page, Post } from 'src/payload-types'
 
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { cloudflareAdapter } from '@/uploads/cloudflare-media-storage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -97,8 +98,7 @@ export default buildConfig({
           enabledCollections: ['pages', 'posts'],
           fields: ({ defaultFields }) => {
             const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
-              if ('name' in field && field.name === 'url') return false
-              return true
+              return !('name' in field && field.name === 'url');
             })
 
             return [
@@ -124,17 +124,21 @@ export default buildConfig({
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
-  endpoints: [
-    // The seed endpoint is used to populate the database with some example data
-    // You should delete this endpoint before deploying your site to production
-    {
-      handler: seedHandler,
-      method: 'get',
-      path: '/seed',
-    },
-  ],
+  endpoints: [],
   globals: [Header, Footer],
   plugins: [
+    cloudStoragePlugin({
+      collections: {
+        media: {
+          adapter: cloudflareAdapter({
+            accountHash: process.env.CLOUDFLARE_ACCOUNT_HASH!,
+            accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
+            apiKey: process.env.CLOUDFLARE_IMAGE_API_TOKEN!,
+          }),
+          prefix: process.env.CUSTOMER_ID,
+        },
+      },
+    }),
     redirectsPlugin({
       collections: ['pages', 'posts'],
       overrides: {
