@@ -102,34 +102,44 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ header }) => {
         </div>
 
         {/* Mobile Menu */}
-        {isOpen && (<div className="md:hidden">
-          <Link href="/" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-            Home
-          </Link>
-          <Link href="/about" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-            About
-          </Link>
-          <button
-            onClick={toggleDropdown}
-            className="block w-full text-left px-4 py-2 hover:bg-muted"
-          >
-            Services
-          </button>
-          {dropdownOpen && (<div className="px-4">
-            <Link href="/service1" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-              Service 1
-            </Link>
-            <Link href="/service2" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-              Service 2
-            </Link>
-            <Link href="/service3" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-              Service 3
-            </Link>
-          </div>)}
-          <Link href="/contact" className="block px-4 py-2 hover:bg-muted" onClick={() => setIsOpen(false)}>
-            Contact
-          </Link>
-        </div>)}
+        {isOpen && (
+          <div className="md:hidden">
+            {header.navItems?.map((navItem, index) => (
+              navItem.type === 'link' ? (
+                <CMSLink
+                  {...navItem.link}
+                  appearance="navBarSimpleLinkMobile"
+                  className="block px-4 py-2 hover:bg-muted"
+                  key={index}
+                  onClickHandler={() => setIsOpen(false)}
+                />
+              ) : (
+                <div key={index} className="relative">
+                  <button
+                    onClick={toggleDropdown}
+                    className="block w-full text-left px-4 py-2 hover:bg-muted"
+                  >
+                    {navItem.dropdownTitle}
+                  </button>
+                  {dropdownOpen && (
+                    <div className="px-4">
+                      {navItem.dropdownLinks?.map((dropdownLink, dropdownIndex) => (
+                        <CMSLink
+                          {...dropdownLink.link}
+                          appearance="dropdownLinkMobile"
+                          className="block px-4 py-2 hover:bg-muted"
+                          key={dropdownIndex}
+                          onClickHandler={() => setIsOpen(false)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+
       </nav>
     </header>
   )

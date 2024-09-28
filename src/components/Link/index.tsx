@@ -71,6 +71,21 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
       </Link>
     )
   }
+  if (appearance === 'navBarSimpleLinkMobile') {
+    return (
+      <Link href={href} className="block px-4 py-2 hover:bg-muted">
+        {label && label}
+      </Link>
+    )
+  }
+
+  if (appearance === 'dropdownLinkMobile') {
+    return (
+      <Link href={href} className="block px-4 py-2 hover:bg-muted">
+        {label && label}
+      </Link>
+    )
+  }
 
   return (
     <Button asChild className={className} size={size} variant={appearance}>
