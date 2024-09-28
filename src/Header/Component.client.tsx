@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 
-import type { Header, Media } from '@/payload-types'
+import type { Footer, Header, Media } from '@/payload-types'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faChevronDown, faTimes } from '@awesome.me/kit-693429779d/icons/classic/solid'
@@ -9,7 +9,7 @@ import Image from 'next/image'
 import { CMSLink } from '@/components/Link'
 
 interface HeaderClientProps {
-  header: Header
+  header: Header | Footer
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ header }) => {
@@ -24,6 +24,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ header }) => {
     setDropdownOpen(!dropdownOpen)
   }
 
+  if (!header.navItems) {
+    return (<>y</>);
+  }
+  header = header as Header
   return (<header className="z-50 relative">
     <nav className="bg-background text-foreground border-b border-border">
       <div className="container flex justify-between items-center py-4">
