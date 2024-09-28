@@ -126,6 +126,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ header }) => {
                       {navItem.dropdownLinks?.map((dropdownLink, dropdownIndex) => (
                         <CMSLink
                           {...dropdownLink.link}
+
                           appearance="dropdownLinkMobile"
                           className="block px-4 py-2 hover:bg-muted"
                           key={dropdownIndex}
