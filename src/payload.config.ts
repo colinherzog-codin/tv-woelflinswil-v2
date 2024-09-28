@@ -8,12 +8,7 @@ import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import {
-  BoldFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  ItalicFeature,
-  LinkFeature,
-  lexicalEditor,
+  BoldFeature, FixedToolbarFeature, HeadingFeature, ItalicFeature, LinkFeature, lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp' // editor-import
 import { UnderlineFeature } from '@payloadcms/richtext-lexical'
@@ -47,9 +42,7 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  return doc?.slug
-    ? `${process.env.NEXT_PUBLIC_SERVER_URL!}/${doc.slug}`
-    : process.env.NEXT_PUBLIC_SERVER_URL!
+  return doc?.slug ? `${process.env.NEXT_PUBLIC_SERVER_URL!}/${doc.slug}` : process.env.NEXT_PUBLIC_SERVER_URL!
 }
 
 export default buildConfig({
@@ -57,67 +50,36 @@ export default buildConfig({
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
-      beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
+      beforeLogin: ['@/components/BeforeLogin'], // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard'],
-    },
-    importMap: {
+    }, importMap: {
       baseDir: path.resolve(dirname),
+    }, user: Users.slug, livePreview: {
+      breakpoints: [{
+        label: 'Mobile', name: 'mobile', width: 375, height: 667,
+      }, {
+        label: 'Tablet', name: 'tablet', width: 768, height: 1024,
+      }, {
+        label: 'Desktop', name: 'desktop', width: 1440, height: 900,
+      }],
     },
-    user: Users.slug,
-    livePreview: {
-      breakpoints: [
-        {
-          label: 'Mobile',
-          name: 'mobile',
-          width: 375,
-          height: 667,
-        },
-        {
-          label: 'Tablet',
-          name: 'tablet',
-          width: 768,
-          height: 1024,
-        },
-        {
-          label: 'Desktop',
-          name: 'desktop',
-          width: 1440,
-          height: 900,
-        },
-      ],
-    },
-  },
-  // This config helps us configure global or default features that the other editors can inherit
+  }, // This config helps us configure global or default features that the other editors can inherit
   editor: lexicalEditor({
     features: () => {
-      return [
-        UnderlineFeature(),
-        BoldFeature(),
-        ItalicFeature(),
-        LinkFeature({
-          enabledCollections: ['pages', 'posts'],
-          fields: ({ defaultFields }) => {
-            const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
-              return !('name' in field && field.name === 'url');
-            })
+      return [UnderlineFeature(), BoldFeature(), ItalicFeature(), LinkFeature({
+        enabledCollections: ['pages', 'posts'], fields: ({ defaultFields }) => {
+          const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
+            return !('name' in field && field.name === 'url')
+          })
 
-            return [
-              ...defaultFieldsWithoutUrl,
-              {
-                name: 'url',
-                type: 'text',
-                admin: {
-                  condition: ({ linkType }) => linkType !== 'internal',
-                },
-                label: ({ t }) => t('fields:enterURL'),
-                required: true,
-              },
-            ]
-          },
-        }),
-      ]
+          return [...defaultFieldsWithoutUrl, {
+            name: 'url', type: 'text', admin: {
+              condition: ({ linkType }) => linkType !== 'internal',
+            }, label: ({ t }) => t('fields:enterURL'), required: true,
+          }]
+        },
+      })]
     },
   }),
   db: mongooseAdapter({
@@ -128,96 +90,74 @@ export default buildConfig({
   csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   endpoints: [],
   globals: [Header, Footer],
-  plugins: [
-    cloudStoragePlugin({
-      collections: {
-        media: {
-          adapter: cloudflareAdapter({
-            accountHash: process.env.CLOUDFLARE_ACCOUNT_HASH!,
-            accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
-            apiKey: process.env.CLOUDFLARE_IMAGE_API_TOKEN!,
-          }),
-          prefix: process.env.CUSTOMER_ID,
-        },
+  plugins: [cloudStoragePlugin({
+    collections: {
+      media: {
+        adapter: cloudflareAdapter({
+          accountHash: process.env.CLOUDFLARE_ACCOUNT_HASH!,
+          accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
+          apiKey: process.env.CLOUDFLARE_IMAGE_API_TOKEN!,
+        }), prefix: process.env.CUSTOMER_ID,
       },
     },
-    ),
-    azureStorage({
-      collections: {
-        ['files']: {
-          prefix: 'tvwpv2'
-        },
+  }), azureStorage({
+    collections: {
+      ['files']: {
+        prefix: 'tvwpv2',
       },
-      allowContainerCreate: true,
-      baseURL: process.env.AZURE_BASE_URL || '',
-      connectionString: process.env.AZURE_CONNECTION_STRING || '',
-      containerName: process.env.AZURE_CONTAINER_NAME || '',
-    }),
-    redirectsPlugin({
-      collections: ['pages', 'posts'],
-      overrides: {
-        // @ts-expect-error
-        fields: ({ defaultFields }) => {
-          return defaultFields.map((field) => {
-            if ('name' in field && field.name === 'from') {
-              return {
-                ...field,
-                admin: {
-                  description: 'You will need to rebuild the website when changing this field.',
+    },
+    allowContainerCreate: true,
+    baseURL: process.env.AZURE_BASE_URL || '',
+    connectionString: process.env.AZURE_CONNECTION_STRING || '',
+    containerName: process.env.AZURE_CONTAINER_NAME || '',
+  }), redirectsPlugin({
+    collections: ['pages', 'posts'], overrides: {
+      // @ts-expect-error
+      fields: ({ defaultFields }) => {
+        return defaultFields.map((field) => {
+          if ('name' in field && field.name === 'from') {
+            return {
+              ...field, admin: {
+                description: 'You will need to rebuild the website when changing this field.',
+              },
+            }
+          }
+          return field
+        })
+      }, hooks: {
+        afterChange: [revalidateRedirects],
+      },
+    },
+  }), nestedDocsPlugin({
+    collections: ['categories'],
+  }), seoPlugin({
+    generateTitle, generateURL,
+  }), formBuilderPlugin({
+    fields: {
+      payment: false,
+    }, formOverrides: {
+      fields: ({ defaultFields }) => {
+        return defaultFields.map((field) => {
+          if ('name' in field && field.name === 'confirmationMessage') {
+            return {
+              ...field, editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [...rootFeatures, FixedToolbarFeature(), HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] })]
                 },
-              }
+              }),
             }
-            return field
-          })
-        },
-        hooks: {
-          afterChange: [revalidateRedirects],
-        },
+          }
+          return field
+        })
       },
-    }),
-    nestedDocsPlugin({
-      collections: ['categories'],
-    }),
-    seoPlugin({
-      generateTitle,
-      generateURL,
-    }),
-    formBuilderPlugin({
-      fields: {
-        payment: false,
+    },
+  }), searchPlugin({
+    collections: ['posts'], beforeSync: beforeSyncWithSearch, searchOverrides: {
+      fields: ({ defaultFields }) => {
+        return [...defaultFields, ...searchFields]
       },
-      formOverrides: {
-        fields: ({ defaultFields }) => {
-          return defaultFields.map((field) => {
-            if ('name' in field && field.name === 'confirmationMessage') {
-              return {
-                ...field,
-                editor: lexicalEditor({
-                  features: ({ rootFeatures }) => {
-                    return [
-                      ...rootFeatures,
-                      FixedToolbarFeature(),
-                      HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    ]
-                  },
-                }),
-              }
-            }
-            return field
-          })
-        },
-      },
-    }),
-    searchPlugin({
-      collections: ['posts'],
-      beforeSync: beforeSyncWithSearch,
-      searchOverrides: {
-        fields: ({ defaultFields }) => {
-          return [...defaultFields, ...searchFields]
-        },
-      },
-    }),
-    payloadCloudPlugin(), // storage-adapter-placeholder
+    },
+  }), payloadCloudPlugin(), // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET!,
   sharp,
