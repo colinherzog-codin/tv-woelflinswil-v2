@@ -1,13 +1,11 @@
 'use client'
 
 import type { StaticImageData } from 'next/image'
-
 import { cn } from 'src/utilities/cn'
 import NextImage from 'next/image'
-import React from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import type { Props as MediaProps } from '../types'
-
 import cssVariables from '@/cssVariables'
 import { useRouter } from 'next/navigation'
 import imageLoader from '@/loader'
@@ -21,18 +19,18 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     imgClassName,
     onClick,
     onLoad: onLoadFromProps,
-    priority,
+    priority = false,
     resource,
     size: sizeFromProps,
     src: srcFromProps,
   } = props
-  const router = useRouter();
 
-  const [isLoading, setIsLoading] = React.useState(true)
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
 
   let width: number | undefined
   let height: number | undefined
-  let alt = altFromProps
+  let alt = altFromProps || ''
   let src: StaticImageData | string = srcFromProps || ''
 
   if (!src && resource && typeof resource === 'object') {
@@ -42,31 +40,43 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
     width = fullWidth!
     height = fullHeight!
-    alt = altFromResource
+    alt = altFromResource || altFromProps || ''
 
+    // Ensure this path is valid for your loader or CDN
     src = `TVWWIL00000002/${fullFilename}`
   }
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
-  const sizes = sizeFromProps ? sizeFromProps : Object.entries(breakpoints)
-    .map(([, value]) => `(max-width: ${value}px) ${value}px`)
-    .join(', ')
+  // Memoizing the sizes to prevent recalculating on every render
+  const sizes = useMemo(() => {
+    return sizeFromProps ? sizeFromProps : Object.entries(breakpoints)
+      .map(([, value]) => `(max-width: ${value}px) ${value}px`)
+      .join(', ')
+  }, [sizeFromProps, breakpoints])
 
-  return (<NextImage
-      alt={alt || ''}
-      className={cn(imgClassName)}
+  // Memoizing className computation for performance
+  const imageClassName = useMemo(() => cn(imgClassName), [imgClassName])
+
+  // Memoizing the onLoad handler for performance
+  const handleLoad = useCallback(() => {
+    setIsLoading(false)
+    if (typeof onLoadFromProps === 'function') {
+      onLoadFromProps()
+    }
+  }, [onLoadFromProps])
+
+  return (
+    <NextImage
+      alt={alt}
+      className={imageClassName}
       fill={fill}
       height={!fill ? height : undefined}
       onClick={onClick}
-      onLoad={() => {
-        setIsLoading(false)
-        if (typeof onLoadFromProps === 'function') {
-          onLoadFromProps()
-        }
-      }}
+      onLoad={handleLoad}
       priority={priority}
       src={src}
       sizes={sizes}
       width={!fill ? width : undefined}
-    />)
+      loader={imageLoader} // Using the custom loader
+    />
+  )
 }
