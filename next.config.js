@@ -6,6 +6,9 @@ const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://loc
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    ppr: 'incremental',
+  },
   images: {
     loader: 'custom',
     loaderFile: './src/loader.js',
