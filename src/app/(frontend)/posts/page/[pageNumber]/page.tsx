@@ -10,14 +10,15 @@ import React from 'react'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-export default async function Page({ params: { pageNumber = 2 } }) {
+export default async function Page({ params: { pageNumber } }) {
   const payload = await getPayloadHMR({ config: configPromise })
 
   const posts = await payload.find({
     collection: 'posts',
-    depth: 1,
-    limit: 12,
+    depth: 2,
+    limit: 3,
     page: pageNumber,
+    sort: 'createdAt:desc',
   })
 
   return (
@@ -50,7 +51,7 @@ export default async function Page({ params: { pageNumber = 2 } }) {
 
 export function generateMetadata({ params: { pageNumber = 2 } }): Metadata {
   return {
-    title: `Payload Website Template Posts Page ${pageNumber}`,
+    title: `Turnende Vereine Wölflinswil News Seite ${pageNumber}`,
   }
 }
 
@@ -58,7 +59,7 @@ export async function generateStaticParams() {
   const payload = await getPayloadHMR({ config: configPromise })
   const posts = await payload.find({
     collection: 'posts',
-    depth: 0,
+    depth: 2,
     limit: 10,
   })
 

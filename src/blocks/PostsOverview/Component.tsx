@@ -16,7 +16,8 @@ export const PostsOverviewBlock: React.FC<Props> = async() => {
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
-    limit: 12,
+    limit: 3,
+    sort: 'createdAt:desc',
   })
   return (
     <div className="pt-2 pb-24">
@@ -24,7 +25,7 @@ export const PostsOverviewBlock: React.FC<Props> = async() => {
         <PageRange
           collection="posts"
           currentPage={posts.page}
-          limit={12}
+          limit={3}
           totalDocs={posts.totalDocs}
         />
       </div>

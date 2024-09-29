@@ -9,7 +9,6 @@ export default {
     './src/**/*.{ts,tsx}',
     flowbite.content(),
   ],
-  darkMode: ['selector', '[data-theme="dark"]'],
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography'), flowbite.plugin(),],
   prefix: '',
   safelist: [
