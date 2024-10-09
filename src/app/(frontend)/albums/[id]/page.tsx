@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { getPhotosInAlbum, Photo } from '@/services/flickrService';
 import { useSwipeable } from 'react-swipeable';
+import { AppProps } from 'next/app'; // If not already imported
 
-interface AlbumPhotosProps {
+
+interface AlbumPhotosProps extends AppProps {
   params: { id: string };
 }
 
