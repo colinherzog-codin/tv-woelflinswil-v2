@@ -7,29 +7,17 @@ import configPromise from '@payload-config'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import React from 'react'
 import PageClient from './page.client'
-import { notFound } from 'next/navigation'
 
+export const dynamic = 'force-static'
 export const revalidate = 600
 
-type Args = {
-  params: Promise<{
-    pageNumber: string
-  }>
-}
-
-export default async function Page({ params: paramsPromise }: Args) {
-  const { pageNumber } = await paramsPromise
+export default async function Page() {
   const payload = await getPayloadHMR({ config: configPromise })
-
-  const sanitizedPageNumber = Number(pageNumber)
-
-  if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
-    limit: 12,
-    page: sanitizedPageNumber,
+    limit: 120,
     overrideAccess: false,
   })
 
@@ -46,7 +34,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PageRange
           collection="posts"
           currentPage={posts.page}
-          limit={12}
+          limit={120}
           totalDocs={posts.totalDocs}
         />
       </div>
@@ -62,28 +50,8 @@ export default async function Page({ params: paramsPromise }: Args) {
   )
 }
 
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { pageNumber } = await paramsPromise
+export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `Payload Website Template Posts`,
   }
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayloadHMR({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 0,
-    limit: 10,
-    draft: false,
-    overrideAccess: false,
-  })
-
-  const pages: { pageNumber: string }[] = []
-
-  for (let i = 1; i <= posts.totalPages; i++) {
-    pages.push({ pageNumber: String(i) })
-  }
-
-  return pages
 }

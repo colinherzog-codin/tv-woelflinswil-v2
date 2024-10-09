@@ -15,28 +15,16 @@ export const PostsOverviewBlock: React.FC<Props> = async() => {
 
   const posts = await payload.find({
     collection: 'posts',
-    depth: 1,
-    limit: 3,
-    sort: 'createdAt:desc',
+    depth: 2,
+    limit: 6,
+    page: 1,
+    sort: 'publishedAt:desc',
   })
+
   return (
     <div className="pt-2 pb-24">
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={3}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
 
       <CollectionArchive posts={posts.docs} />
-
-      <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
-      </div>
     </div>
   )
 }

@@ -48,11 +48,7 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 export default buildConfig({
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
-      beforeLogin: ['@/components/BeforeLogin'], // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
-      beforeDashboard: ['@/components/BeforeDashboard'],
+      beforeLogin: ['@/components/BeforeLogin'], beforeDashboard: ['@/components/BeforeDashboard'],
     }, importMap: {
       baseDir: path.resolve(dirname),
     }, user: Users.slug, livePreview: {
@@ -64,13 +60,14 @@ export default buildConfig({
         label: 'Desktop', name: 'desktop', width: 1440, height: 900,
       }],
     },
-  }, // This config helps us configure global or default features that the other editors can inherit
+  },
   editor: lexicalEditor({
     features: () => {
       return [UnderlineFeature(), BoldFeature(), ItalicFeature(), LinkFeature({
         enabledCollections: ['pages', 'posts'], fields: ({ defaultFields }) => {
           const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
-            return !('name' in field && field.name === 'url')
+            if ('name' in field && field.name === 'url') return false
+            return true
           })
 
           return [...defaultFieldsWithoutUrl, {

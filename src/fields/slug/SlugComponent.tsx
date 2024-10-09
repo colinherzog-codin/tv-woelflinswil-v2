@@ -21,10 +21,10 @@ type SlugComponentProps = {
 } & TextFieldClientProps
 
 export const SlugComponent: React.FC<SlugComponentProps> = ({
-  field,
-  fieldToUse,
-  checkboxFieldPath: checkboxFieldPathFromProps,
-}) => {
+                                                              field,
+                                                              fieldToUse,
+                                                              checkboxFieldPath: checkboxFieldPathFromProps,
+                                                            }) => {
   const { label } = field
   const { path, readOnly: readOnlyFromProps } = useFieldProps()
 
@@ -69,7 +69,7 @@ export const SlugComponent: React.FC<SlugComponentProps> = ({
         value: !checkboxValue,
       })
     },
-    [checkboxValue, targetFieldValue],
+    [checkboxValue, checkboxFieldPath, dispatchFields],
   )
 
   const readOnly = readOnlyFromProps || checkboxValue

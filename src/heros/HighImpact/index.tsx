@@ -9,7 +9,7 @@ import RichText from '@/components/RichText'
 
 export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
   return (
-    <div className="relative -mt-[10.4rem] flex items-end justify-center text-white min-h-[80vh]" data-theme="dark">
+    <div className="relative -mt-[10.4rem] flex items-end justify-center text-white min-h-[50vh] max-h-[60vh]" data-theme="dark">
       <div
         className="container mb-8 z-10 relative flex flex-col items-center justify-center text-center"> {/* Added padding at the bottom */}
         <div className="max-w-[34rem]">
@@ -23,7 +23,7 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
             </ul>)}
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
+      <div className="min-h-[50vh] max-h-[60vh] select-none">
         {media && typeof media === 'object' && (<React.Fragment>
             <Media fill imgClassName="-z-10 object-cover" priority resource={media} />
             <div

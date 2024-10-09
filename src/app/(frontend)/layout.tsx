@@ -10,32 +10,33 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import './globals.css'
 import { draftMode } from 'next/headers'
 
-export const experimental_ppr = true
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = draftMode()
-  return (<html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-    <head>
-      <link href="/favicon.ico" rel="icon" sizes="32x32" />
-      <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
-    </head>
-    <body>
-    <AdminBar
-      adminBarProps={{
-        preview: isEnabled,
-      }}
-    />
-    <LivePreviewListener />
+import './globals.css'
 
-    <Header />
-    <Suspense fallback={<div>Loading...</div>}>
-      {children}
-    </Suspense>
-    <Footer />
-    </body>
-    </html>)
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { isEnabled } = await draftMode()
+
+  return (<html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+  <head>
+    <link href="/favicon.ico" rel="icon" sizes="32x32" />
+    <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+  </head>
+  <body className="flex flex-col h-screen justify-between">
+  <AdminBar
+    adminBarProps={{
+      preview: isEnabled,
+    }}
+  />
+  <LivePreviewListener />
+
+  <Header />
+  <Suspense fallback={<div>Loading...</div>}>
+    {children}
+  </Suspense>
+  <Footer />
+  </body>
+  </html>)
 }
 
 export const metadata: Metadata = {
