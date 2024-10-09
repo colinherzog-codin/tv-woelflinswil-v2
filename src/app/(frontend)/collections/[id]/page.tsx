@@ -1,7 +1,7 @@
 import { getAlbumsInCollection, Album } from '@/services/flickrService'
 import Link from 'next/link'
 
-interface CollectionAlbumsProps {
+export interface CollectionAlbumsProps {
   params: { id: string };
 }
 
