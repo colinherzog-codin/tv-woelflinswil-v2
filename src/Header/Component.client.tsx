@@ -78,7 +78,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ header }) => {
                             </div>
                           </div>
                         </a>
-                      </li>))}
+                      </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
