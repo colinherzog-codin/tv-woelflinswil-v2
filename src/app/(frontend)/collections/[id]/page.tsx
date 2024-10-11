@@ -1,11 +1,9 @@
 import { getAlbumsInCollection, Album } from '@/services/flickrService'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
-export interface CollectionAlbumsProps {
-  params: { id: string };
-}
-
-export default async function CollectionAlbums({ params }: CollectionAlbumsProps) {
+export default async function CollectionAlbums() {
+  const params = useParams<{ id: string; }>()
   const albums = await getAlbumsInCollection(params.id)
 
   return (<div className="pt-24 pb-24">

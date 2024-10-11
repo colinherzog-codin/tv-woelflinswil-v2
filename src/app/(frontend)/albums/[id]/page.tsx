@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { getPhotosInAlbum, Photo } from '@/services/flickrService';
 import { useSwipeable } from 'react-swipeable';
+import { useParams } from 'next/navigation'
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page() {
+  const params = useParams<{ id: string; }>()
+
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
