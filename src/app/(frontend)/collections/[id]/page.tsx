@@ -1,3 +1,4 @@
+'use client';
 import { getAlbumsInCollection, Album } from '@/services/flickrService'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
