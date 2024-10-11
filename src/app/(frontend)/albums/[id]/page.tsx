@@ -4,11 +4,19 @@ import { useState, useEffect } from 'react';
 import { getPhotosInAlbum, Photo } from '@/services/flickrService';
 import { useSwipeable } from 'react-swipeable';
 
-export interface AlbumPhotosProps {
-  params: { id: string };
-}
+// Define the type for params
+type Args = {
+  params: {
+    id?: string;
+  };
+};
 
-export default function AlbumPhotos({ params }: AlbumPhotosProps) {
+// No `generateStaticParams` is needed if you're using dynamic routes.
+// If you plan on pre-generating some pages, you can add it back based on your use case.
+// For now, we'll assume this is fully dynamic.
+
+// AlbumPhotos component now accepts params as an argument
+export default function AlbumPhotos({ params }: Args) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -16,9 +24,12 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
   const [showLightbox, setShowLightbox] = useState<boolean>(false); // Lightbox visibility
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false); // Loading state for more photos
 
+  // Fetch photos when the component mounts or when the page number changes
   useEffect(() => {
+    if (!params.id) return;
+
     async function fetchPhotos() {
-      const { photos: newPhotos, pages } = await getPhotosInAlbum(params.id, page);
+      const { photos: newPhotos, pages } = await getPhotosInAlbum(params.id ||'', page);
       setPhotos((prev) => [...prev, ...newPhotos]);
       setTotalPages(pages);
     }
@@ -45,21 +56,22 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
     };
   }, [showLightbox]);
 
+  // Load more photos when the user requests more
   const loadMorePhotos = async () => {
     if (page < totalPages && !isLoadingMore) {
       setIsLoadingMore(true); // Set loading state
-      setPage(page + 1);
+      setPage(page + 1); // Increment page count to load more photos
       setIsLoadingMore(false);
     }
   };
 
-  // Open lightbox
+  // Open the lightbox for a specific photo
   const openLightbox = (index: number) => {
     setSelectedPhotoIndex(index);
     setShowLightbox(true);
   };
 
-  // Close lightbox
+  // Close the lightbox
   const closeLightbox = () => {
     setShowLightbox(false);
     setSelectedPhotoIndex(null);
@@ -73,7 +85,7 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
     trackMouse: true, // Allows mouse swiping as well
   });
 
-  // Navigate next photo and load more if needed
+  // Navigate to the next photo and load more if needed
   const nextPhoto = async () => {
     if (selectedPhotoIndex !== null) {
       // Check if it's the last photo and if more photos can be loaded
@@ -86,15 +98,17 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
     }
   };
 
-  // Navigate previous photo
+  // Navigate to the previous photo
   const prevPhoto = () => {
     if (selectedPhotoIndex !== null && selectedPhotoIndex > 0) {
       setSelectedPhotoIndex(selectedPhotoIndex - 1);
     }
   };
 
+  // Render the component
   return (
     <div className="p-6">
+      {/* Grid of album photos */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
         {photos.map((photo, index) => (
           <ProgressiveImage
@@ -107,6 +121,7 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
         ))}
       </div>
 
+      {/* Load more photos button */}
       {page < totalPages && (
         <button
           className="mt-6 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -133,7 +148,7 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
               className="max-w-full max-h-full rounded-lg shadow-lg"
               onDragStart={(e) => e.preventDefault()} // Prevent dragging the image
             />
-            {/* Show chevron left only if not on the first image */}
+            {/* Show left arrow if not on the first image */}
             {selectedPhotoIndex > 0 && (
               <button
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-6xl p-4"
@@ -142,7 +157,7 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
                 &#8249;
               </button>
             )}
-            {/* Show chevron right if there are more photos to load or not on the last image */}
+            {/* Show right arrow if not on the last image or if more photos can be loaded */}
             {(selectedPhotoIndex < photos.length - 1 || page < totalPages) && (
               <button
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-6xl p-4"
@@ -158,7 +173,7 @@ export default function AlbumPhotos({ params }: AlbumPhotosProps) {
   );
 }
 
-// Progressive Image Component
+// ProgressiveImage Component
 function ProgressiveImage({
                             lowResSrc,
                             highResSrc,
@@ -173,31 +188,23 @@ function ProgressiveImage({
   const [src, setSrc] = useState<string>(lowResSrc);
   const [isHighResLoaded, setIsHighResLoaded] = useState<boolean>(false);
 
-  const handleHighResLoad = () => {
-    setIsHighResLoaded(true);
-    setSrc(highResSrc);
-  };
+  useEffect(() => {
+    const img = new Image();
+    img.src = highResSrc;
+    img.onload = () => {
+      setIsHighResLoaded(true);
+      setSrc(highResSrc);
+    };
+  }, [highResSrc]);
 
   return (
     <div className="relative cursor-pointer" onClick={onClick} style={{ height: '200px', maxWidth: '100%' }}>
-      {/* Low-res image */}
       <img
         src={src}
         alt={alt}
-        className={`h-full w-auto max-w-full rounded-lg shadow-lg bg-background text-foreground transition-opacity duration-500 ${
-          isHighResLoaded ? 'opacity-0' : 'opacity-100'
-        }`}
+        className="h-full w-auto max-w-full rounded-lg shadow-lg bg-background text-foreground transition-opacity duration-500"
         loading="lazy"
-      />
-
-      {/* High-res image (loaded after low-res) */}
-      <img
-        src={highResSrc}
-        alt={alt}
-        onLoad={handleHighResLoad}
-        className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-lg transition-opacity duration-500 opacity-0"
-        style={{ opacity: isHighResLoaded ? 1 : 0 }}
-        onDragStart={(e) => e.preventDefault()} // Prevent dragging the image
+        style={{ opacity: isHighResLoaded ? 1 : 0.5 }}
       />
     </div>
   );
